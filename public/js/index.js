@@ -21,20 +21,7 @@ tg.expand();
     }
 */
 const userData = {
-    user: {
-        query_id: "AAEIQ6IeAAAAAAhDoh4hiL7H",
-        user: {
-            id: 513950472,
-            first_name: "Жекіч",
-            last_name: "🇺🇦🥟",
-            username: "Munakuso",
-            language_code: "ru",
-            is_premium: true,
-            allows_write_to_pm: true,
-        },
-        auth_date: "1715765835",
-        hash: "7de6599114cda0d90321c9819eea0595807f31fecd3d4fd8ecda22e87abf6c0f",
-    },
+    user: tg.initDataUnsafe,
     coins: 0,
 };
 
@@ -51,7 +38,16 @@ const fps = 30;
 let gameObjects = [];
 // Временный костыль
 let oldReferalCount = 0;
-
+let allGameObj = [
+    new gameClass.Boss(),
+    new gameClass.Light2(),
+    new gameClass.Screen2(),
+    new gameClass.Worker1(),
+    new gameClass.Light1(),
+    new gameClass.Screen1(),
+    new gameClass.Worker2(),
+    new gameClass.Worker3(),
+];
 initMethods();
 setInterval(sendOnlineMsg, 1000);
 window.onload = init;
@@ -161,33 +157,33 @@ function drawSpecificUserCount() {
     }
     if (userData.referalCount == 1) {
         return (gameObjects = [
-            new gameClass.Boss(),
-            new gameClass.Light2(),
-            new gameClass.Screen2(),
-            new gameClass.Worker1(),
+            allGameObj[0],
+            allGameObj[1],
+            allGameObj[2],
+            allGameObj[3],
         ]);
     }
     if (userData.referalCount == 2) {
         return (gameObjects = [
-            new gameClass.Boss(),
-            new gameClass.Light2(),
-            new gameClass.Screen2(),
-            new gameClass.Worker1(),
-            new gameClass.Light1(),
-            new gameClass.Screen1(),
-            new gameClass.Worker2(),
+            allGameObj[0],
+            allGameObj[1],
+            allGameObj[2],
+            allGameObj[3],
+            allGameObj[4],
+            allGameObj[5],
+            allGameObj[6],
         ]);
     }
     if (userData.referalCount >= 3) {
         return (gameObjects = [
-            new gameClass.Boss(),
-            new gameClass.Light2(),
-            new gameClass.Screen2(),
-            new gameClass.Worker1(),
-            new gameClass.Light1(),
-            new gameClass.Screen1(),
-            new gameClass.Worker2(),
-            new gameClass.Worker3(),
+            allGameObj[0],
+            allGameObj[1],
+            allGameObj[2],
+            allGameObj[3],
+            allGameObj[4],
+            allGameObj[5],
+            allGameObj[6],
+            allGameObj[7],
         ]);
     }
 }
