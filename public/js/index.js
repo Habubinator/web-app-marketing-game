@@ -40,11 +40,8 @@ const userData = {
 
 async function initMethods() {
     await authUser(userData);
-    sendOnlineMsg();
+    await sendOnlineMsg();
 }
-
-initMethods();
-setInterval(sendOnlineMsg, 1000);
 
 /** @type {HTMLCanvasElement} */
 let canvas = document.getElementById("canvas");
@@ -52,6 +49,11 @@ let ctx = canvas.getContext("2d");
 let clickableObjects = [];
 const fps = 30;
 let gameObjects = [];
+// Временный костыль
+let oldReferalCount = 0;
+
+initMethods();
+setInterval(sendOnlineMsg, 1000);
 window.onload = init;
 
 function init() {
@@ -61,13 +63,7 @@ function init() {
     ctx.imageSmoothingQuality = "high";
 
     gameObjects = [new gameClass.Boss(), new gameClass.Light2()];
-    // TODO - сделать передачу количества рефералов чтобы отрисовывать
-    // new gameClass.Light1(),
-    //     new gameClass.Screen1(),
-    //     new gameClass.Screen2(),
-    //     new gameClass.Worker1(),
-    //     new gameClass.Worker2(),
-    //     new gameClass.Worker3(),
+
     clickableObjects = [
         new gameClass.InviteFriends(65, 365, 140, 110),
         new gameClass.InviteFriends(320, 420, 120, 105),
@@ -90,6 +86,7 @@ function init() {
 }
 
 function gameLoop(timeStamp) {
+    drawSpecificUserCount();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(assets.background, 0, 0, 480, 800);
     gameObjects.forEach((obj) => {
@@ -111,17 +108,19 @@ function gameLoop(timeStamp) {
 
 async function sendOnlineMsg() {
     try {
-        userData.coins = (
-            await (
-                await fetch("/api/online", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json;charset=utf-8",
-                    },
-                    body: JSON.stringify({ user: userData.user }),
-                })
-            ).json()
-        ).coins;
+        let res = await (
+            await fetch("/api/online", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json;charset=utf-8",
+                },
+                body: JSON.stringify({ user: userData.user }),
+            })
+        ).json();
+
+        userData.coins = res.coins;
+        userData.user.user = res.user;
+        userData.referalCount = +res.referalCount;
     } catch (error) {
         console.log(error);
         alert("Произошла ошибка, возможно сервер оффлайн.");
@@ -153,4 +152,41 @@ function getMousePosition(canvas, event) {
     let x = (event.clientX - rect.left) * scaleX;
     let y = (event.clientY - rect.top) * scaleY;
     return { x, y };
+}
+
+function drawSpecificUserCount() {
+    if (userData.referalCount == oldReferalCount) {
+        return;
+    }
+    if (userData.referalCount == 1) {
+        return (gameObjects = [
+            new gameClass.Boss(),
+            new gameClass.Light2(),
+            new gameClass.Screen2(),
+            new gameClass.Worker1(),
+        ]);
+    }
+    if (userData.referalCount == 2) {
+        return (gameObjects = [
+            new gameClass.Boss(),
+            new gameClass.Light2(),
+            new gameClass.Screen2(),
+            new gameClass.Worker1(),
+            new gameClass.Light1(),
+            new gameClass.Screen1(),
+            new gameClass.Worker2(),
+        ]);
+    }
+    if (userData.referalCount >= 3) {
+        return (gameObjects = [
+            new gameClass.Boss(),
+            new gameClass.Light2(),
+            new gameClass.Screen2(),
+            new gameClass.Worker1(),
+            new gameClass.Light1(),
+            new gameClass.Screen1(),
+            new gameClass.Worker2(),
+            new gameClass.Worker3(),
+        ]);
+    }
 }

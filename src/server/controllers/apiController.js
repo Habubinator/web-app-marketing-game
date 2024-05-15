@@ -17,6 +17,8 @@ class ApiController {
             const coinsToAdd = cISForUser + cISForReferal * referalCount;
             return res.json({
                 coins: await db.addUserCoins(user.user.id, coinsToAdd),
+                user: await db.getUserById(user.user.id),
+                referalCount: await referalCount,
             });
         } catch (error) {
             return res.status(500).json({ message: `${error}` });
