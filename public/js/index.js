@@ -156,6 +156,7 @@ function getMousePosition(canvas, event) {
 
 function drawSpecificUserCount() {
     if (userData.referalCount == oldReferalCount) {
+        oldReferalCount = userData.referalCount;
         return;
     }
     if (userData.referalCount == 1) {
